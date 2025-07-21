@@ -4,142 +4,119 @@
   <meta charset="UTF-8">
   <title>Multi-Event Countdown</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-   <!-- ✅ Google Fonts --> // Use custom fonts
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <!-- Importing Montserrat font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet"> <!-- Use custom fonts -->
   <style>
-    /* === Base styles for body === */
     body {
-      font-family:'Montserrat', sans-serif;
-      background-color: #111; /* Dark background for contrast */
+      font-family: 'Montserrat', sans-serif; /* Place the primary font inside single quotations. The secondary font will be used in case of an error with the primary font. */
+      background-color: #111;
       color: #fff;
       margin: 0;
       padding: 1rem;
     }
 
-    /* === Container for each countdown event === */
     .event {
       margin: 2rem auto;
       max-width: 700px;
       padding: 2rem;
-      background-color: #000; /* Black card background */
+      background-color: #000;
       border-radius: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: white;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-      position: relative;
     }
 
-    /* === Name of the event === */
     .event-title {
       font-size: 1.5rem;
       font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .label {
+      font-size: 0.9rem;
+      opacity: 0.8;
       margin-bottom: 1rem;
     }
 
-    /* === Container for time units === */
     .countdown {
       display: flex;
-      justify-content: space-around;
-      width: 100%;
+      justify-content: center;
     }
 
-    /* === Container for time unit === */
     .unit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      margin: 0 1rem;
+      text-align: center;
     }
 
-    /* === Number display === */
     .value {
       font-size: 2.5rem;
       font-weight: bold;
-    }
-
-    /* === Label text under numbers === */
-    .label {
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      opacity: 0.8;
     }
   </style>
 </head>
 <body>
 <script>
-  // === Utility function to create a Date object from DD, MM, YYYY format ===
+  // === Helper function to create a Date from day, month, year ===
   function makeDate(d, m, y) {
-    return new Date(y, m - 1, d); // JavaScript months are 0-indexed
+    return new Date(y, m - 1, d);
   }
 
-  // === List of countdown events with names and target end dates ===
+  // === Define the events here ===
   const events = [
     {
-      name: "Test1",
-      endDate: makeDate(1, 1, 2026),
+      name: "Event 1",
+      endDate: makeDate(1, 1, 2026)
     },
     {
-      name: "Test2",
-      endDate: makeDate(1, 1, 2024),
+      name: "Event 2",
+      endDate: makeDate(1, 1, 2024)
     }
-  ];
+  ]; // Add new events above this line //
 
-  // === Main function to update and display all countdown timers ===
+  // === Main function to render the countdowns ===
   function updateCountdowns() {
-    document.body.innerHTML = ""; // Clear the body to redraw all events
+    document.body.innerHTML = ""; // Clear existing content
 
     events.forEach(event => {
-      // === Create main container for the event ===
       const wrapper = document.createElement("div");
       wrapper.className = "event";
 
-      // === Add event name as title ===
+      // Add event name as title
       const title = document.createElement("div");
       title.className = "event-title";
       title.textContent = event.name;
       wrapper.appendChild(title);
 
-      // === Add event target date below the title ===
+      // Add event end date
       const dateText = document.createElement("div");
       dateText.className = "label";
       dateText.textContent = `Target Date: ${event.endDate.toDateString()}`;
       wrapper.appendChild(dateText);
 
-      // === Create countdown container ===
+      // Create countdown display
       const countdown = document.createElement("div");
       countdown.className = "countdown";
 
-      // === Calculate time difference between now and the event date (in days only) ===
       const now = new Date();
       const diff = event.endDate - now;
       const isPast = diff < 0;
-      const totalDays = Math.abs(Math.floor(diff / (1000 * 60 * 60 * 24)));
+      const days = Math.abs(Math.floor(diff / (1000 * 60 * 60 * 24)));
 
-      const days = totalDays;
+      const unitDiv = document.createElement("div");
+      unitDiv.className = "unit";
 
-      const data = [
-        { label: isPast ? 'DAYS SINCE' : 'DAYS LEFT', value: days }
-      ];
+      const value = document.createElement("div");
+      value.className = "value";
+      value.textContent = days.toString().padStart(2, '0');
 
-      data.forEach(unit => {
-        const unitDiv = document.createElement("div");
-        unitDiv.className = "unit";
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = isPast ? 'DAYS SINCE' : 'DAYS LEFT';
 
-        const value = document.createElement("div");
-        value.className = "value";
-        value.textContent = unit.value.toString().padStart(2, '0');
-
-        const label = document.createElement("div");
-        label.className = "label";
-        label.textContent = unit.label;
-
-        unitDiv.appendChild(value);
-        unitDiv.appendChild(label);
-        countdown.appendChild(unitDiv);
-      });
-
+      unitDiv.appendChild(value);
+      unitDiv.appendChild(label);
+      countdown.appendChild(unitDiv);
       wrapper.appendChild(countdown);
       document.body.appendChild(wrapper);
     });
